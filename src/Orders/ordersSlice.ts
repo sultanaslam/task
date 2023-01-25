@@ -6,24 +6,24 @@ export interface OrdersState {
   data: Array<orderType>;
 }
 
-const initialState: OrdersState = {
-  data: []
-};
+const initialState: OrdersState = { data: [] };
 
 export const ordersSlice = createSlice({
-  name: 'orders',
   initialState,
+  name: 'orders',
   reducers: {
     getData: (state, action: PayloadAction<string>) => {
+      let updatedData = defaultOrders;
       if (action.payload?.length)
-        state.data = defaultOrders.filter(
+        updatedData = defaultOrders.filter(
           order =>
             order.orderID?.includes(action.payload) ||
             order.customerName
               ?.toUpperCase()
               ?.includes(action.payload.toUpperCase())
         );
-      else state.data = defaultOrders;
+
+      state.data = updatedData;
     }
   }
 });

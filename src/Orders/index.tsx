@@ -1,20 +1,25 @@
-import { Fragment, memo, useEffect, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useState } from 'react';
 
-import { useAppSelector, useAppDispatch } from '../hooks';
+import Calendar from '../Icons/Calendar';
 import DownArrow from '../Icons/DownArrow';
 import Ellipsis from '../Icons/Ellipsis';
 import UpArrow from '../Icons/UpArrow';
-import { getData, orders } from './ordersSlice';
 import Searchbar from './Searchbar';
+import { getData, orders } from './ordersSlice';
+import { useAppSelector, useAppDispatch } from '../hooks';
 
 const Orders = () => {
   const [searchText, setSearchText] = useState('');
   const data = useAppSelector(orders);
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
+  const loadData = useCallback(() => {
     dispatch(getData(searchText));
-  }, [dispatch, searchText]);
+  }, [dispatch, searchText])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData]);
 
   return (
     <div className='bg-slate-50 p-4'>
@@ -44,22 +49,29 @@ const Orders = () => {
         <tbody>
           <tr className='h-2' />
 
-          {data.map((order, index) => (
+          {data.map((order) => (
             <Fragment key={order.orderID}>
               <tr className='bg-white overflow-hidden rounded-md shadow'>
                 <td className='p-4 rounded-tl-md rounded-bl-md'>
                   {order.orderID}
                 </td>
-                <td className='p-4'>{order.orderStatus}</td>
+                <td className='p-4'>
+                  <span className='inline-block mr-2 h-2 w-2 bg-red-500 rounded-2xl' />
+                  {order.orderStatus}</td>
                 <td className='p-4'>
                   <div className='font-medium'>{order.companyName}</div>
                   {order.customerName}
                 </td>
-                <td className='p-4'>{order.purDate}</td>
-                <td className='p-4'>{order.fulfillDate}</td>
+                <td className='p-4'>
+                  <Calendar color='#b100b1' />
+                  {order.purDate}
+                </td>
+                <td className='p-4'>
+                  <Calendar color='#00bd0d' />
+                  {order.fulfillDate}</td>
                 <td className='p-4'>{order.invoiceStatus}</td>
-                <td className='p-4'>{order.amount}</td>
-                <td className=' rounded-tr-md rounded-br-md'>
+                <td className='p-4 font-medium'>{order.currency} {order.amount}</td>
+                <td className='rounded-tr-md rounded-br-md'>
                   <Ellipsis />
                 </td>
               </tr>
